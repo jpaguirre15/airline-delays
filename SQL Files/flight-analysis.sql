@@ -8,32 +8,6 @@ GROUP BY origin_city_name, origin
 -- ORDER BY total DESC
 ORDER BY total ASC
 LIMIT 20;
-/***
-
-Most Flights Origin Arriving in Las Vegas - Top 10
-"LAX"	1059
-"SFO"	669
-"SEA"	593
-"DEN"	534
-"PHX"	470
-"SAN"	399
-"OAK"	395
-"DFW"	387
-"ATL"	372
-"ORD"	364
-
-Least Flights Origin Arriving in Las Vegas - Top 10
-"GSP"	2
-"ATW"	8
-"ORF"	8
-"PIA"	9
-"GFK"	9
-"GRI"	9
-"MFR"	9
-"GTF"	9
-"XNA"	9
-"SHV"	9
-***/ 
 
 /* Query answers: 
 - Most Delayed Airport Flights Total (in minutes) Arriving in Las Vegas - Top 10 
@@ -44,38 +18,12 @@ FROM flights2019
 GROUP BY origin_city_name, origin
 -- ORDER BY total_minutes DESC 
 ORDER BY total_minutes ASC;
-/***
-
-Most Delayed Airport Flights Total (in minutes) Arriving in Las Vegas - Top 10
-"SFO"	9079
-"LAX"	3578
-"ORD"	1966
-"DFW"	1437
-"CVG"	1422
-"SJC"	1387
-"MIA"	1379
-"PDX"	1374
-"SMF"	1161
-"BUR"	734
-
-Least Delayed Airport Flights Total (in minutes) Arriving in Las Vegas - Top 10
-"MSP"	-3403
-"JFK"	-2679
-"BWI"	-1489
-"MCI"	-1164
-"PHL"	-1150
-"ATL"	-1140
-"SEA"	-1093
-"OAK"	-780
-"IND"	-763
-"DAL"	-749
-
-***/ 
 
 /* 
-A query to see how many flights came from MSP - Minneapolis, MN since they have the most minutes in earliest arrivals.
+A query to see how many flights came from MSP - Minneapolis, MN since they have the least minutes in late arrivals.
 As results shows, I was not disappointed. 
-Because MSP had a total of 221 flights, only 22 flights were late
+Because MSP had a total of 221 flights, which they had a decent handful of flights comint to Las Vegas. 
+Only 22 flights were late for 15 minutes or more. 
 About 10% of flights in MSP -> LAS are late for 15+ minutes. 
 */
 SELECT COUNT(*)
@@ -84,3 +32,31 @@ WHERE origin = 'MSP';
 SELECT *
 FROM flights2019
 WHERE origin = 'MSP' and arr_del15 = 1;
+
+/* 
+A query to see how many flights came from SFO - San Francisco, CA since they have the most minutes in late arrivals.
+Looking at SFO on the other hand... 
+SFO flight total counts = 669
+SFO late flights total counts = 193
+About 29% of flights in SFO -> LAS are late for 15+ minutes.
+*/
+SELECT COUNT(*)
+FROM flights2019
+WHERE origin = 'SFO' and arr_del15 = 1;
+
+/* Query answers: 
+- Airline Carrier Arrival Counts
+*/ 
+SELECT op_unique_carrier, COUNT(*) AS total_carriers
+FROM flights2019
+GROUP BY op_unique_carrier
+ORDER BY total_carriers DESC;
+
+/* Query answers: 
+- Airline Carrier Delayed Counts
+*/ 
+SELECT op_unique_carrier, COUNT(*) AS total_delays
+FROM flights2019
+WHERE arr_delay=1
+GROUP BY op_unique_carrier
+ORDER BY total_delays DESC;
